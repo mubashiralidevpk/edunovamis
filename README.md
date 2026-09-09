@@ -1,39 +1,41 @@
-# Edunova Desktop (Tauri)
+# Edunova Mobile (Capacitor)
 
-Native desktop client for the Edunova Management Intelligence System.
-It opens the live Edunova platform (https://edunovamis.lovable.app) in a
-fast, lightweight native window, so every platform update appears instantly.
+Native Android and iOS shell for the Edunova platform. It loads the live published
+platform, so every web update reaches phones without a new app build.
 
-## How to publish the installers
+## Upload to GitHub
 
-1. Create a new GitHub repository (for example `edunova-desktop`).
-2. Upload every file from this zip to the repository root
-   (`src-tauri/`, `dist/`, `.github/`, `README.md`, `.gitignore`).
-3. Go to the repository **Actions** tab and enable workflows.
-4. Create a release tag to trigger the build:
-   - Actions → "Build Edunova Desktop (Tauri)" → Run workflow, **or**
-   - push a tag: `git tag v1.0.0 && git push origin v1.0.0`
-5. When the three jobs finish, a GitHub Release named
-   `Edunova Desktop v1.0.0` contains:
-   - `Edunova_1.0.0_x64-setup.exe` and `Edunova_1.0.0_x64_en-US.msi` (Windows)
-   - `Edunova_1.0.0_universal.dmg` (macOS)
-   - `Edunova_1.0.0_amd64.AppImage` and `.deb` (Linux)
-6. Send the release URL back so the download page links to real files.
-
-## Build locally (optional)
-
-Requires Rust (https://rustup.rs) and, on Windows, the
-"Desktop development with C++" workload plus WebView2.
+1. Upload **all** files in this folder to your repository (a separate repo, e.g.
+   `edunova-mobile`, is cleanest). Make sure the hidden `.github/workflows/` folder
+   is included — GitHub's drag-and-drop web upload sometimes skips it. If it does,
+   create the file manually at `.github/workflows/mobile-release.yml`.
+2. Go to **Actions → Build Edunova Mobile (Android) → Run workflow**, or push a tag:
 
 ```bash
-cargo install tauri-cli --version "^2"
-cargo tauri build
+git tag mobile-v1.0.0 && git push origin mobile-v1.0.0
 ```
 
-Output lands in `src-tauri/target/release/bundle/`.
+3. The workflow attaches `Edunova_1.0.0.apk` to a GitHub Release. Send me the
+   release link and I will put the download button on the website.
 
-## Notes
+## Build locally
 
-- Windows SmartScreen shows a warning for unsigned installers.
-  Use "More info → Run anyway", or buy a code-signing certificate.
-- Change the app URL in `src-tauri/tauri.conf.json` → `app.windows[0].url`.
+```bash
+npm install
+npx cap add android     # and/or: npx cap add ios
+npx cap sync
+npx cap open android    # Android Studio
+npx cap open ios        # Xcode, macOS only
+```
+
+## Google Play / App Store
+
+- Play Store needs a signed **AAB**: create an upload keystore, add it as repo
+  secrets, and run `./gradlew bundleRelease` in the `android` folder.
+- App Store builds require macOS with Xcode and an Apple Developer account.
+
+## Configuration
+
+`capacitor.config.json` holds the app id (`com.edunova.app`), app name, splash
+colours and the live platform URL. Change the `server.url` if the production
+domain changes.
