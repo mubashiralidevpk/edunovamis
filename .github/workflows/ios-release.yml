@@ -1,0 +1,94 @@
+name: Build Edunova iOS (iPhone / iPad)
+
+on:
+  push:
+    tags: ['ios-v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ios:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Add iOS platform
+        run: npx cap add ios
+
+      - name: Sync Capacitor
+        run: npx cap sync ios
+
+      - name: Install CocoaPods
+        working-directory: ios/App
+        run: pod install --repo-update
+
+      - name: Build unsigned device archive
+        working-directory: ios/App
+        run: |
+          xcodebuild \
+            -workspace App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            clean build
+
+      - name: Package unsigned .ipa
+        run: |
+          mkdir -p out Payload
+          cp -R "ios/App/build/Build/Products/Release-iphoneos/App.app" Payload/
+          zip -qry "out/Edunova_1.0.0_unsigned.ipa" Payload
+          rm -rf Payload
+          ls -la out
+
+      - name: Build iOS Simulator app
+        working-directory: ios/App
+        run: |
+          xcodebuild \
+            -workspace App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -derivedDataPath build-sim \
+            CODE_SIGNING_ALLOWED=NO \
+            clean build
+
+      - name: Package Simulator build
+        run: |
+          cd ios/App/build-sim/Build/Products/Release-iphonesimulator
+          zip -qry "$GITHUB_WORKSPACE/out/Edunova_1.0.0_Simulator.app.zip" App.app
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: edunova-ios
+          path: out/*
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || 'ios' }}
+          name: Edunova iOS ${{ github.ref_type == 'tag' && github.ref_name || 'latest' }}
+          body: |
+            Edunova for iPhone and iPad (iOS 15+).
+
+            - `Edunova_1.0.0_unsigned.ipa` — unsigned build. Sign it with your Apple Developer certificate (or install with AltStore / Sideloadly) before installing on a device.
+            - `Edunova_1.0.0_Simulator.app.zip` — build for the iOS Simulator on a Mac.
+
+            App Store distribution requires an Apple Developer account and a signed archive.
+          files: out/*
