@@ -1,41 +1,52 @@
-# Edunova Mobile (Capacitor)
+# Edunova for iPhone & iPad (iOS)
 
-Native Android and iOS shell for the Edunova platform. It loads the live published
-platform, so every web update reaches phones without a new app build.
+Native iOS shell for the Edunova platform. It opens the live Edunova app, so every
+platform update appears in the phone app without a new build.
+
+This folder is **iOS only** — keep it separate from the Android and desktop releases.
 
 ## Upload to GitHub
 
-1. Upload **all** files in this folder to your repository (a separate repo, e.g.
-   `edunova-mobile`, is cleanest). Make sure the hidden `.github/workflows/` folder
-   is included — GitHub's drag-and-drop web upload sometimes skips it. If it does,
-   create the file manually at `.github/workflows/mobile-release.yml`.
-2. Go to **Actions → Build Edunova Mobile (Android) → Run workflow**, or push a tag:
+1. Upload the contents of this folder to a repository (or a folder in your repo).
+   The workflow file must end up at `.github/workflows/ios-release.yml`.
+2. Open the repository's **Actions** tab, choose **Build Edunova iOS (iPhone / iPad)**,
+   then **Run workflow**. Or push a tag:
 
-```bash
-git tag mobile-v1.0.0 && git push origin mobile-v1.0.0
-```
+   ```bash
+   git tag ios-v1.0.0 && git push origin ios-v1.0.0
+   ```
 
-3. The workflow attaches `Edunova_1.0.0.apk` to a GitHub Release. Send me the
-   release link and I will put the download button on the website.
+3. The build runs on a macOS runner and publishes a release tagged `ios`
+   (or your tag) with:
+   - `Edunova_1.0.0_unsigned.ipa`
+   - `Edunova_1.0.0_Simulator.app.zip`
 
-## Build locally
+## Installing on an iPhone
+
+Apple does not allow installing unsigned apps directly. Choose one:
+
+- **Apple Developer account ($99/year)** — sign the `.ipa` and install via Xcode,
+  TestFlight, or the App Store.
+- **Sideloadly / AltStore** — sign with a free Apple ID for personal use
+  (needs re-signing every 7 days).
+- **Simulator** — unzip the Simulator build and drag it onto a running simulator on a Mac.
+
+## Local build (Mac only)
 
 ```bash
 npm install
-npx cap add android     # and/or: npx cap add ios
-npx cap sync
-npx cap open android    # Android Studio
-npx cap open ios        # Xcode, macOS only
+npx cap add ios
+npx cap sync ios
+npx cap open ios     # builds and runs in Xcode
 ```
 
-## Google Play / App Store
+## Files
 
-- Play Store needs a signed **AAB**: create an upload keystore, add it as repo
-  secrets, and run `./gradlew bundleRelease` in the `android` folder.
-- App Store builds require macOS with Xcode and an Apple Developer account.
+```
+capacitor.config.json   App id, name and the live URL it loads
+www/index.html          Splash / offline fallback screen
+resources/              App icon and splash artwork
+.github/workflows/      GitHub Actions iOS build
+```
 
-## Configuration
-
-`capacitor.config.json` holds the app id (`com.edunova.app`), app name, splash
-colours and the live platform URL. Change the `server.url` if the production
-domain changes.
+Change the live URL in `capacitor.config.json` if the production domain changes.
