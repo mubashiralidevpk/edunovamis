@@ -4,7 +4,7 @@
   "webDir": "www",
   "backgroundColor": "#0C0E14",
   "server": {
-    "url": "https://edunovamis.lovable.app/auth/login?mobile=1&ios=1",
+    "url": "https://edunovamis.lovable.app/auth/login?mobile=1",
     "cleartext": false,
     "allowNavigation": [
       "edunovamis.lovable.app",
@@ -12,17 +12,21 @@
       "*.supabase.co"
     ]
   },
+  "android": {
+    "backgroundColor": "#0C0E14",
+    "allowMixedContent": false,
+    "webContentsDebuggingEnabled": false
+  },
   "ios": {
     "backgroundColor": "#0C0E14",
-    "contentInset": "always",
-    "limitsNavigationsToAppBoundDomains": false,
-    "scrollEnabled": true
+    "contentInset": "always"
   },
   "plugins": {
     "SplashScreen": {
       "launchAutoHide": true,
       "launchShowDuration": 1200,
       "backgroundColor": "#0C0E14",
+      "androidScaleType": "CENTER_CROP",
       "showSpinner": false
     },
     "StatusBar": {
