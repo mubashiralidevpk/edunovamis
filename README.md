@@ -53,3 +53,16 @@ injects these into the Android manifest. For iOS, add these keys to
 `capacitor.config.json` holds the app id (`com.edunova.app`), app name, splash
 colours and the live platform URL. Change the `server.url` if the production
 domain changes.
+
+
+## Push notifications (device notification bar)
+
+1. In the Firebase console open your project > Project settings > **Your apps** and add an **Android** app with package name `com.edunova.app`.
+2. Download the generated **`google-services.json`** and commit it to the **root of this repository** (same folder as `package.json`).
+3. Push a `mobile-v*` tag or run the workflow. The build copies `google-services.json` into `android/app/` automatically.
+4. Without that file the app still works, but notifications will not arrive.
+
+The Android manifest gets `POST_NOTIFICATIONS`, `CAMERA`, `ACCESS_FINE_LOCATION` and `ACCESS_COARSE_LOCATION`.
+Inside the app, open the bell menu and tap **Allow notifications** once — after that, alerts appear in the phone's notification bar even when Edunova is closed.
+
+For iOS you additionally need an APNs key uploaded in Firebase (Project settings > Cloud Messaging) and the **Push Notifications** capability enabled in Xcode.

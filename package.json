@@ -2,7 +2,7 @@
   "name": "edunova-mobile",
   "version": "1.0.0",
   "private": true,
-  "description": "Edunova mobile app (Android & iOS) — native shell for the Edunova platform",
+  "description": "Edunova mobile app (Android & iOS) \u2014 native shell for the Edunova platform",
   "scripts": {
     "sync": "cap sync",
     "add:android": "cap add android",
@@ -15,7 +15,8 @@
     "@capacitor/core": "^6.2.0",
     "@capacitor/ios": "^6.2.0",
     "@capacitor/splash-screen": "^6.0.3",
-    "@capacitor/status-bar": "^6.0.2"
+    "@capacitor/status-bar": "^6.0.2",
+    "@capacitor/push-notifications": "^6.0.4"
   },
   "devDependencies": {
     "@capacitor/cli": "^6.2.0"
