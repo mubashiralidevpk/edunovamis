@@ -66,3 +66,6 @@ The Android manifest gets `POST_NOTIFICATIONS`, `CAMERA`, `ACCESS_FINE_LOCATION`
 Inside the app, open the bell menu and tap **Allow notifications** once — after that, alerts appear in the phone's notification bar even when Edunova is closed.
 
 For iOS you additionally need an APNs key uploaded in Firebase (Project settings > Cloud Messaging) and the **Push Notifications** capability enabled in Xcode.
+
+## Icons
+All icons use the transparent stylish Edunova "E" (no background tile).
